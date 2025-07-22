@@ -11,7 +11,7 @@ const PLAYER_COLORS: PlayerColor[] = ['red', 'light-blue', 'yellow', 'green', 'p
 
 const generateSessionCode = (storeId: string): string => {
     const randomCode = Math.floor(10000 + Math.random() * 90000).toString();
-    return `${storeId}-${randomCode}`;
+    return `${storeId.toUpperCase()}-${randomCode}`;
 };
 
 const createNewPlayer = (index: number): Partial<Player> => ({

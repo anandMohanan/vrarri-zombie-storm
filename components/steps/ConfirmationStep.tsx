@@ -52,10 +52,15 @@ export default function ConfirmationStep() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Game Image Placeholder */}
-                    <div className="space-y-4">
-                        <Image src="/images/zombie-storm.jpg" alt="Zombie Storm" width={400} height={200} />
-                    </div>
+                <div className="flex items-center justify-center h-full">
+  <Image
+    src="/zombiestorm.jpg"
+    alt="Zombie Storm"
+    width={400}
+    height={300}
+    className="rounded-lg"
+  />
+</div>
 
                     {/* Player Information */}
                     <div className="space-y-4">

@@ -17,8 +17,8 @@ import StepLayout from '../layout/StepLayout';
 const games = [
     {
         name: 'Zombie Storm',
-        img: '/images/zombie-storm.jpg',
-        jpDesc: '宝探しアドベンチャー',
+        img: '/zombiestorm.jpg',
+        jpDesc: '「ゾンビの巣窟で科学者ノアを救出せよ！」',
         enDesc: 'Rescue the scientist NOA from the zombie stronghold!',
     },
 ];
@@ -62,12 +62,11 @@ export default function GameSelectionStep() {
                     <CarouselContent>
                         {games.map((g) => (
                             <CarouselItem key={g.name} className="basis-full">
-                                <div className="transition">
+                                <div className="relative w-full ">
                                     <Image
                                         src={g.img}
                                         alt={g.name}
-                                        width={400}
-                                        height={200}
+                                        width={800} height={200}
                                     />
                                     <p className="text-center mt-2">{g.jpDesc}</p>
                                     <p className="text-center text-sm text-gray-600">

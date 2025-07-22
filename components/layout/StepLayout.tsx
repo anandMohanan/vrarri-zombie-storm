@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAppStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 interface StepLayoutProps {
     children: ReactNode;
@@ -43,16 +44,7 @@ export default function StepLayout({
                 <div className=" rounded-xl p-6 w-full">
                     <div className="flex items-center justify-between w-full max-w-none px-4">
                         {/* Logo */}
-                        <div className="flex items-center space-x-4">
-                            <div className="text-3xl font-bold text-black">
-                                XR
-                                <span className="text-sm font-normal ml-1">CENTER</span>
-                            </div>
-                            <div className="h-8 w-px bg-gray-300"></div>
-                            <div className="text-xl font-bold text-black">
-                                GAME<br />SPACE
-                            </div>
-                        </div>
+                        <Image src={"/xrcenter_logo_black.png"} width={200} height={50} alt="XR Center Logo" />
 
                         {/* Team Number and Player Indicator */}
                         <div className="flex items-center space-x-4 align-middle flex-col">
