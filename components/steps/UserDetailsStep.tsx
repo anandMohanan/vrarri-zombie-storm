@@ -94,9 +94,7 @@ export default function UserDetailsStep() {
     function onSubmit(values: z.infer<typeof formSchema>) {
         const submittedValues = { ...values };
         if (submittedValues.dateOfBirth instanceof Date) {
-            submittedValues.dateOfBirth = submittedValues.dateOfBirth
-                .toISOString()
-                .split('T')[0];
+              submittedValues.dateOfBirth = format(submittedValues.dateOfBirth, 'yyyy-MM-dd');
         }
         updateCurrentPlayer(submittedValues);
         setCurrentStep('confirmation');
