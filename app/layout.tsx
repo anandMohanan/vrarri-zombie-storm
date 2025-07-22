@@ -6,8 +6,8 @@ import { ReactQueryClientProvider } from '@/components/provider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'XR Game Space Registration',
-    description: 'Player registration system for XR Game Space',
+    title: 'XR Center | Game Space',
+    description: 'Player registration system for XR Center Game Space',
 };
 
 export default function RootLayout({

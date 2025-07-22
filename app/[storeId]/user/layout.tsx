@@ -1,5 +1,10 @@
 import { storeIdToName } from "@/lib/utils";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+    title: 'Nakano | Game Space',
+    description: 'Nakano Broadway Game Space - Player registration ',
+};
 export default async function Layout({ children, params }: { children: React.ReactNode, params: { storeId: string } }) {
     const { storeId } = await params;
     const storeName = storeIdToName(storeId);
