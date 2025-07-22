@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -22,7 +23,7 @@ export default function HomePage() {
                     <div className="space-y-6">
                         <Button asChild variant={"link"}>
                             <Link href="/nk1/user">
-                                NK1 - Nakano  Broadway Store
+                                NK1 - Nakano  Broadway Store <ChevronRightIcon className="ml-2 h-4 w-4" />
                             </Link>
                         </Button>
 
