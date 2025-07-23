@@ -94,7 +94,7 @@ export default function UserDetailsStep() {
     function onSubmit(values: z.infer<typeof formSchema>) {
         const submittedValues = { ...values };
         if (submittedValues.dateOfBirth instanceof Date) {
-              submittedValues.dateOfBirth = format(submittedValues.dateOfBirth, 'yyyy-MM-dd');
+            submittedValues.dateOfBirth = format(submittedValues.dateOfBirth, 'yyyy-MM-dd');
         }
         updateCurrentPlayer(submittedValues);
         setCurrentStep('confirmation');
@@ -128,7 +128,7 @@ export default function UserDetailsStep() {
                             render={({ field }) => (
                                 <FormItem className="space-y-2">
                                     <FormLabel className="text-sm font-medium text-gray-700">
-                                        名前 / Name 
+                                        名前 / Name
                                     </FormLabel>
                                     <FormControl>
                                         <Input
@@ -218,6 +218,7 @@ export default function UserDetailsStep() {
                                                     mode="single"
                                                     selected={field.value}
                                                     onSelect={field.onChange}
+                                                    captionLayout='dropdown'
                                                     disabled={(date) =>
                                                         date > new Date() ||
                                                         date < new Date('1900-01-01')

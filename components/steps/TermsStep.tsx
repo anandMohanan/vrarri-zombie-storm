@@ -22,13 +22,13 @@ const CONSENT_LABELS = {
         agreeTerms: '上記規約を読み、同意しました。',
         agreeEsign: '電子署名の使用に同意します。',
         agreeEmail:
-            'ニュースレターおよびプロモーションコンテンツを受け取るために、私のメールアドレスが使用されることに同意します。',
+            'ニュースレターやキャンペーン情報を受け取る（任意）',
     },
     en: {
         agreeTerms: 'I have read and agree to the above agreement.',
         agreeEsign: 'I agree to the use of electronic signatures.',
         agreeEmail:
-            'I agree that my email address may be used to receive newsletters and promotional content.',
+            'I would like to receive newsletters and promotional content. (optional)',
     },
 };
 
@@ -58,7 +58,7 @@ export default function TermsStep() {
 
     const termsVersion = 'v1.0';
 
-    const canProceed = agreeTerms && agreeEsign && agreeEmail && hasSignature;
+    const canProceed = agreeTerms && agreeEsign &&  hasSignature;
 
     const labels = CONSENT_LABELS[activeTab];
 
