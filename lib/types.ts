@@ -43,6 +43,7 @@ export type AppStep =
     | 'confirmation'
     | 'terms'
     | 'team-name'
+    | 'team-name-input'
     | 'completion';
 
 export interface AppState {

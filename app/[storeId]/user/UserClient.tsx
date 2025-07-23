@@ -1,5 +1,4 @@
 "use client";
-
 import { useAppStore } from '@/lib/store';
 import WelcomeStep from '@/components/steps/WelcomeStep';
 import SessionCodeStep from '@/components/steps/SessionCodeStep';
@@ -7,6 +6,7 @@ import UserDetailsStep from '@/components/steps/UserDetailsStep';
 import ConfirmationStep from '@/components/steps/ConfirmationStep';
 import TermsStep from '@/components/steps/TermsStep';
 import TeamNameStep from '@/components/steps/TeamNameStep';
+import TeamNameInputStep from '@/components/steps/TeamNameInputStep';
 import CompletionStep from '@/components/steps/CompletionStep';
 import { useEffect } from 'react';
 import GameSelectionStep from '@/components/steps/GameSelectionStep';
@@ -14,15 +14,15 @@ import GameSelectionStep from '@/components/steps/GameSelectionStep';
 interface UserClientProps {
     storeId: string;
 }
+
 export const UserClient = ({ storeId }: UserClientProps) => {
     const { team, initializeSession } = useAppStore();
 
     useEffect(() => {
-        // Initialize session when app loads, passing storeId
         if (!team.sessionCode) {
-            initializeSession(storeId); // Pass storeId here
+            initializeSession(storeId);
         }
-    }, [team.sessionCode, initializeSession, storeId]); // Add storeId to dependency array
+    }, [team.sessionCode, initializeSession, storeId]);
 
     const renderCurrentStep = () => {
         switch (team.currentStep) {
@@ -40,6 +40,8 @@ export const UserClient = ({ storeId }: UserClientProps) => {
                 return <TermsStep />;
             case 'team-name':
                 return <TeamNameStep />;
+            case 'team-name-input':
+                return <TeamNameInputStep />;
             case 'completion':
                 return <CompletionStep />;
             default:

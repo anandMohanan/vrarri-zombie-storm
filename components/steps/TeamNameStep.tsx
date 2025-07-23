@@ -2,34 +2,18 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useAppStore } from '@/lib/store';
 import StepLayout from '@/components/layout/StepLayout';
 import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
 
 export default function TeamNameStep() {
-    const { team, setTeamName, addNewPlayer, completeRegistration, setCurrentStep } = useAppStore();
-    const [teamNameInput, setTeamNameInput] = useState(team.teamName || '');
-    const [isCompleting, setIsCompleting] = useState(false);
+    const { team, addNewPlayer, setCurrentStep } = useAppStore();
 
-    const handleCompleteRegistration = async () => {
-        setIsCompleting(true);
-        try {
-            setTeamName(teamNameInput);
-            await completeRegistration();
-            toast.success('Team registration completed! / チーム登録が完了しました');
-        } catch (error) {
-            console.error('Registration error:', error);
-            toast.error('Registration failed. Please try again. / 登録に失敗しました。もう一度お試しください。');
-        } finally {
-            setIsCompleting(false);
-        }
+    const handleCompleteRegistration = () => {
+        setCurrentStep('team-name-input');
     };
 
     const handleAddMember = () => {
-        setTeamName(teamNameInput);
         addNewPlayer();
         setCurrentStep('user-details');
     };
@@ -42,26 +26,11 @@ export default function TeamNameStep() {
                 {/* Title */}
                 <div className="text-center space-y-2">
                     <h1 className="text-xl font-bold text-gray-900">
-                        チーム名を入力してください
+                        チーム登録の確認
                     </h1>
                     <p className="text-gray-600">
-                        Please enter the team name.
+                        Team Registration Confirmation
                     </p>
-                </div>
-
-                {/* Team Name Input */}
-                <div className="space-y-4">
-                    <Label htmlFor="teamName" className="text-sm font-medium text-gray-700">
-                        Team Name
-                    </Label>
-                    <Input
-                        id="teamName"
-                        placeholder="Team XRC"
-                        value={teamNameInput}
-                        onChange={(e) => setTeamNameInput(e.target.value)}
-                        className="text-lg p-4 border-gray-300 text-center"
-                        disabled={isCompleting}
-                    />
                 </div>
 
                 {/* Current Status */}
@@ -99,36 +68,30 @@ export default function TeamNameStep() {
 
                 {/* Action Buttons */}
                 <div className="space-y-4">
+                {/* Add Member Button */}
+                {canAddMorePlayers && (
+                    <div className="flex justify-center">
+                    <Button
+                    onClick={handleAddMember}
+                    variant="outline"
+                    size="lg"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 text-base font-medium rounded-md"
+                    >
+                    メンバーを追加 / Add member
+                    </Button>
+                    </div>
+                )}
                     {/* Complete Registration Button */}
                     <div className="flex justify-center">
                         <Button
                             onClick={handleCompleteRegistration}
-                            disabled={!teamNameInput.trim() || isCompleting}
                             size="lg"
-                            className="bg-black hover:bg-gray-800 disabled:bg-gray-300 text-white px-8 py-4 text-lg font-medium rounded-md transition-colors duration-200 min-w-[320px]"
+                            className="bg-black hover:bg-gray-800 text-white px-8 py-4 text-lg font-medium rounded-md transition-colors duration-200 min-w-[320px]"
                         >
-                            {isCompleting ? (
-                                <Loader2 className="animate-spin" />
-                            ) : (
-                                'チーム登録を完了する / Complete Team Registration'
-                            )}
+                            チーム登録を完了する / Complete Team Registration
                         </Button>
                     </div>
 
-                    {/* Add Member Button */}
-                    {canAddMorePlayers && (
-                        <div className="flex justify-center">
-                            <Button
-                                onClick={handleAddMember}
-                                variant="outline"
-                                size="lg"
-                                className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 text-base font-medium rounded-md"
-                                disabled={isCompleting}
-                            >
-                                メンバーを追加 / Add member
-                            </Button>
-                        </div>
-                    )}
                 </div>
 
                 {/* Additional Info */}
