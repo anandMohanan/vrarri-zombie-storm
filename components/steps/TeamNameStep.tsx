@@ -51,11 +51,11 @@ export default function TeamNameStep() {
                                     <div key={player.id} className="flex items-center space-x-2 bg-white rounded-md px-3 py-1 border">
                                         <div
                                             className={`w-4 h-4 rounded border border-white shadow-sm ${player.color === 'red' ? 'bg-red-500' :
-                                                    player.color === 'light-blue' ? 'bg-sky-400' :
-                                                        player.color === 'yellow' ? 'bg-yellow-500' :
-                                                            player.color === 'green' ? 'bg-green-500' :
-                                                                player.color === 'purple' ? 'bg-purple-500' :
-                                                                    player.color === 'orange' ? 'bg-orange-500' : 'bg-gray-500'
+                                                player.color === 'blue' ? 'bg-sky-400' :
+                                                    player.color === 'yellow' ? 'bg-yellow-500' :
+                                                        player.color === 'green' ? 'bg-green-500' :
+                                                            player.color === 'purple' ? 'bg-purple-500' :
+                                                                player.color === 'orange' ? 'bg-orange-500' : 'bg-gray-500'
                                                 }`}
                                         ></div>
                                         <span className="text-sm">{player.name}</span>
@@ -68,19 +68,19 @@ export default function TeamNameStep() {
 
                 {/* Action Buttons */}
                 <div className="space-y-4">
-                {/* Add Member Button */}
-                {canAddMorePlayers && (
-                    <div className="flex justify-center">
-                    <Button
-                    onClick={handleAddMember}
-                    variant="outline"
-                    size="lg"
-                    className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 text-base font-medium rounded-md"
-                    >
-                    メンバーを追加 / Add member
-                    </Button>
-                    </div>
-                )}
+                    {/* Add Member Button */}
+                    {canAddMorePlayers && (
+                        <div className="flex justify-center">
+                            <Button
+                                onClick={handleAddMember}
+                                variant="outline"
+                                size="lg"
+                                className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 text-base font-medium rounded-md"
+                            >
+                                メンバーを追加 / Add member
+                            </Button>
+                        </div>
+                    )}
                     {/* Complete Registration Button */}
                     <div className="flex justify-center">
                         <Button

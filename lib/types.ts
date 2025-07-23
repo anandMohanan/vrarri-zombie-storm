@@ -22,7 +22,7 @@ export interface Player {
     };
 }
 
-export type PlayerColor = 'red' | 'light-blue' | 'yellow' | 'green' | 'purple' | 'orange';
+export type PlayerColor = 'red' | 'blue' | 'yellow' | 'green' | 'purple' | 'orange';
 
 export interface Team {
     sessionCode: string;

@@ -9,7 +9,7 @@ import {
 
 const PLAYER_COLORS: PlayerColor[] = [
     'red',
-    'light-blue',
+    'blue',
     'yellow',
     'green',
     'purple',

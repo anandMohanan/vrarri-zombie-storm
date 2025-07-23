@@ -29,7 +29,7 @@ export default function ConfirmationStep() {
     const getPlayerColorClass = (color: string) => {
         const colorMap = {
             'red': 'bg-red-500',
-            'light-blue': 'bg-sky-400',
+            'blue': 'bg-sky-400',
             'yellow': 'bg-yellow-500',
             'green': 'bg-green-500',
             'purple': 'bg-purple-500',

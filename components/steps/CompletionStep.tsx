@@ -52,7 +52,7 @@ export default function CompletionStep() {
                 <div 
                   className={`w-5 h-5 rounded border-2 border-white shadow-sm ${
                     player.color === 'red' ? 'bg-red-500' :
-                    player.color === 'light-blue' ? 'bg-sky-400' :
+                    player.color === 'blue' ? 'bg-sky-400' :
                     player.color === 'yellow' ? 'bg-yellow-500' :
                     player.color === 'green' ? 'bg-green-500' :
                     player.color === 'purple' ? 'bg-purple-500' :
