@@ -41,7 +41,7 @@ export default function StepLayout({
         <div className="w-full min-h-screen">
             {/* Header - Full Width */}
             {showHeader && (
-                <div className=" rounded-xl p-6 w-full">
+                <div className=" sticky top-0 rounded-xl p-6 w-full bg-white z-50">
                     <div className="flex items-center justify-between w-full max-w-none px-4">
                         {/* Logo */}
                         <Image src={"/xrcenter_logo_black.png"} width={200} height={50} alt="XR Center Logo" />
