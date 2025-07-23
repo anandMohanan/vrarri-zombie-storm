@@ -46,6 +46,7 @@ export default function GameSelectionStep() {
 
     const handleNext = () => {
         if (!selected) return;
+        console.log('Next:', selected);
         setSelectedGame(selected);
         setCurrentStep('session-code');
     };

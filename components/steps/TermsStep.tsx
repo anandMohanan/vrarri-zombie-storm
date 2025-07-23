@@ -5,43 +5,63 @@ import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/store';
 import StepLayout from '@/components/layout/StepLayout';
 import SignatureCanvas from 'react-signature-canvas';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { TERMS_JP } from '@/lib/terms/terms-jp';
+import { TERMS_EN } from '@/lib/terms/terms-en';
 
+// ------------------------------------------------------------------
+// Consent labels per language
+// ------------------------------------------------------------------
+const CONSENT_LABELS = {
+  jp: {
+    agreeTerms:
+      '上記規約を読み、同意しました。',
+    agreeEsign:
+      '電子署名の使用に同意します。',
+    agreeEmail:
+      'ニュースレターおよびプロモーションコンテンツを受け取るために、私のメールアドレスが使用されることに同意します。',
+  },
+  en: {
+    agreeTerms:
+      'I have read and agree to the above agreement.',
+    agreeEsign:
+      'I agree to the use of electronic signatures.',
+    agreeEmail:
+      'I agree that my email address may be used to receive newsletters and promotional content.',
+  },
+};
+
+// ------------------------------------------------------------------
+// Component
+// ------------------------------------------------------------------
 export default function TermsStep() {
-  const { confirmCurrentPlayer, setCurrentStep, team, updateCurrentPlayer } = useAppStore();
-  const [hasSignature, setHasSignature] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const {
+    confirmCurrentPlayer,
+    setCurrentStep,
+    team,
+    updateCurrentPlayer,
+  } = useAppStore();
+
   const sigCanvasRef = useRef<SignatureCanvas>(null);
 
-  const handleAgree = async () => {
-    if (sigCanvasRef.current && hasSignature) {
-      setIsUploading(true);
-      
-      try {
-        const signatureData = sigCanvasRef.current.toDataURL();
-        
-        // Update current player with signature data and agreement
-        updateCurrentPlayer({ 
-          signature: signatureData,
-          agreedToTerms: true 
-        });
-        
-        // This will now upload signature to Firebase Storage
-        await confirmCurrentPlayer();
-        
-        // Navigate to next step
-        if (team.players.length + 1 < team.maxPlayers) {
-          setCurrentStep('team-name');
-        } else {
-          setCurrentStep('team-name');
-        }
-      } catch (error) {
-        console.error('Error processing signature:', error);
-        alert('Error saving signature. Please try again.');
-      } finally {
-        setIsUploading(false);
-      }
-    }
-  };
+  const [hasSignature, setHasSignature] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  // Consent toggles
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [agreeEsign, setAgreeEsign] = useState(false);
+  const [agreeEmail, setAgreeEmail] = useState(false);
+
+  // Active tab
+  const [activeTab, setActiveTab] = useState<'jp' | 'en'>('jp');
+
+  const termsVersion = 'v1.0';
+
+  const canProceed = agreeTerms && agreeEsign && agreeEmail && hasSignature;
+
+  const labels = CONSENT_LABELS[activeTab];
 
   const handleSignatureEnd = () => {
     if (sigCanvasRef.current && !sigCanvasRef.current.isEmpty()) {
@@ -50,97 +70,115 @@ export default function TermsStep() {
   };
 
   const clearSignature = () => {
-    if (sigCanvasRef.current) {
-      sigCanvasRef.current.clear();
-      setHasSignature(false);
+    sigCanvasRef.current?.clear();
+    setHasSignature(false);
+  };
+
+  const handleAgree = async () => {
+    if (!sigCanvasRef.current || !canProceed) return;
+
+    setIsUploading(true);
+
+    try {
+      const signatureData = sigCanvasRef.current.toDataURL();
+
+      updateCurrentPlayer({
+        signature: signatureData,
+        agreedToTerms: true,
+        consentFlags: {
+          agreeTerms,
+          agreeEsign,
+          agreeEmail,
+        },
+        signatureMeta: {
+          timestamp: new Date().toISOString(),
+          termsVersion,
+        },
+      });
+
+      await confirmCurrentPlayer();
+
+      if (team.players.length + 1 < team.maxPlayers) {
+        setCurrentStep('team-name');
+      } else {
+        setCurrentStep('team-name');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error saving signature. Please try again.');
+    } finally {
+      setIsUploading(false);
     }
   };
 
   return (
-    <StepLayout showHeader={true} showTeamNumber={true} showPlayerIndicator={true}>
-      <div className="space-y-3">
+    <StepLayout showHeader showTeamNumber showPlayerIndicator>
+      <div className="space-y-6">
         {/* Title */}
-        <div className="text-center space-y-2">
+        <div className="text-center">
           <h1 className="text-xl font-bold text-gray-900">
-            規約説明
+            規約説明 / Terms and Conditions
           </h1>
-          <p className="text-gray-600">
-            Terms and Conditions
-          </p>
         </div>
 
-        {/* Terms Content */}
-        <div className="bg-gray-50 rounded-lg p-6 h-53 overflow-y-auto border">
-          <div className="space-y-4 text-sm leading-relaxed">
-            <p className="font-semibold">利用規約 / Terms of Service</p>
-            
-            <div className="space-y-2">
-              <p>1. <strong>安全に関する注意事項 / Safety Guidelines</strong></p>
-              <p>• VR体験中は指定されたプレイエリア内でのみ活動してください。</p>
-              <p>• Please stay within the designated play area during VR experience.</p>
-              <p>• 体調不良を感じた場合は、すぐにスタッフにお知らせください。</p>
-              <p>• If you feel unwell, please notify staff immediately.</p>
-            </div>
-
-            <div className="space-y-2">
-              <p>2. <strong>プライバシーポリシー / Privacy Policy</strong></p>
-              <p>• ゲームプレイ動画は、お客様への提供および施設の品質向上のためにのみ使用されます。</p>
-              <p>• Gameplay videos will only be used for customer delivery and facility improvement.</p>
-              <p>• 個人情報は適切に管理し、第三者への提供は行いません。</p>
-              <p>• Personal information will be properly managed and not shared with third parties.</p>
-            </div>
-
-            <div className="space-y-2">
-              <p>3. <strong>設備の使用について / Equipment Usage</strong></p>
-              <p>• VRヘッドセットや機器は丁寧にお取り扱いください。</p>
-              <p>• Please handle VR headsets and equipment with care.</p>
-              <p>• 故意による破損の場合は、修理費用をご負担いただく場合があります。</p>
-              <p>• Intentional damage may result in repair costs.</p>
-            </div>
-
-            <div className="space-y-2">
-              <p>4. <strong>体験に関する注意 / Experience Guidelines</strong></p>
-              <p>• 13歳未満のお客様は保護者の同意が必要です。</p>
-              <p>• Customers under 13 require parental consent.</p>
-              <p>• 妊娠中の方、心臓に疾患のある方は体験をお控えください。</p>
-              <p>• Pregnant individuals or those with heart conditions should refrain from participation.</p>
-            </div>
-
-            <div className="space-y-2">
-              <p>5. <strong>免責事項 / Disclaimer</strong></p>
-              <p>• 体験中の事故やけがについて、当施設は責任を負いかねます。</p>
-              <p>• The facility is not responsible for accidents or injuries during the experience.</p>
-              <p>• お客様の責任において体験にご参加ください。</p>
-              <p>• Please participate at your own risk.</p>
-            </div>
-
-            <p className="text-xs text-gray-500 pt-4">
-              本規約は2024年1月1日より施行されます。 / These terms are effective from January 1, 2024.
-            </p>
+        {/* Tabs */}
+        <Tabs
+          defaultValue="jp"
+          className="w-full"
+          onValueChange={(v) => setActiveTab(v as 'jp' | 'en')}
+        >
+          <div className="flex items-center justify-between">
+            <TabsList className="grid w-fit grid-cols-2">
+              <TabsTrigger value="jp">日本語</TabsTrigger>
+              <TabsTrigger value="en">English</TabsTrigger>
+            </TabsList>
+            <p>ver1.0</p>
           </div>
+
+          <TabsContent value="jp">
+            <TermsBox text={TERMS_JP} />
+          </TabsContent>
+          <TabsContent value="en">
+            <TermsBox text={TERMS_EN} />
+          </TabsContent>
+        </Tabs>
+
+        {/* Consent toggles */}
+        <div className="space-y-3 border-t pt-4">
+          <ToggleRow
+            checked={agreeTerms}
+            onChange={setAgreeTerms}
+            label={labels.agreeTerms}
+          />
+          <ToggleRow
+            checked={agreeEsign}
+            onChange={setAgreeEsign}
+            label={labels.agreeEsign}
+          />
+          <ToggleRow
+            checked={agreeEmail}
+            onChange={setAgreeEmail}
+            label={labels.agreeEmail}
+          />
         </div>
 
-        {/* Signature Section */}
+        {/* Signature */}
         <div className="space-y-4">
-          <div className="text-center">
-            <p className="text-sm text-gray-600 mb-2">
-              上記規約に同意いただける場合は、下記にサインをお願いします。
-            </p>
-            <p className="text-xs text-gray-500">
-              If you agree to the above terms, please sign below.
-            </p>
-          </div>
+          <p className="text-center text-sm text-gray-600">
+            上記規約に同意いただける場合は、下記にサインをお願いします。
+            <br />
+            If you agree to the above terms, please sign below.
+          </p>
 
-          {/* Signature Canvas */}
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-white">
             <div className="text-sm text-gray-600 mb-2">署名 / Signature</div>
             <div className="border border-gray-200 rounded">
               <SignatureCanvas
                 ref={sigCanvasRef}
                 canvasProps={{
-                  width: 500,
-                  height: 150,
-                  className: 'signature-canvas w-full'
+                  width: 600,
+                  height: 200,
+                  className: 'border w-full',
                 }}
                 onEnd={handleSignatureEnd}
                 backgroundColor="white"
@@ -151,40 +189,59 @@ export default function TermsStep() {
                 variant="outline"
                 size="sm"
                 onClick={clearSignature}
-                className="text-xs"
                 disabled={isUploading}
               >
                 Clear
               </Button>
               <span className="text-xs text-gray-500">
-                {hasSignature ? '✓ Signature captured' : 'Please sign above'}
+                {hasSignature
+                  ? '✓ Signature captured'
+                  : 'Please sign above'}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Agree Button */}
-        <div className="flex justify-center pt-4">
-          <Button 
+        {/* Agree button */}
+        <div className="flex justify-center">
+          <Button
             onClick={handleAgree}
-            disabled={!hasSignature || isUploading}
+            disabled={!canProceed || isUploading}
             size="lg"
-            className="bg-black hover:bg-gray-800 disabled:bg-gray-300 text-white px-12 py-4 text-lg font-medium rounded-md transition-colors duration-200"
+            className="bg-black hover:bg-gray-800 disabled:bg-gray-300 text-white px-12 py-4 text-lg font-medium rounded-md transition-colors"
           >
-            {isUploading ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Saving...
-              </>
-            ) : (
-              '同意する / Agree'
-            )}
+            {isUploading ? 'Saving…' : '同意する / Agree'}
           </Button>
         </div>
       </div>
     </StepLayout>
+  );
+}
+
+// ------------------------------------------------------------------
+// Helpers
+// ------------------------------------------------------------------
+function TermsBox({ text }: { text: string }) {
+  return (
+    <div className="bg-gray-50 rounded-lg p-6 h-64 overflow-y-auto border text-sm leading-relaxed">
+      <pre className="whitespace-pre-wrap font-sans">{text}</pre>
+    </div>
+  );
+}
+
+function ToggleRow({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  label: string;
+}) {
+  return (
+    <div className="flex items-start space-x-3">
+      <Switch checked={checked} onCheckedChange={onChange} />
+      <Label className="text-sm leading-tight">{label}</Label>
+    </div>
   );
 }

@@ -9,14 +9,12 @@ export default async function Layout({ children, params }: { children: React.Rea
     const { storeId } = await params;
     const storeName = storeIdToName(storeId);
     return (
-        <main className="min-h-screen  flex items-center justify-center">
-            <div className="w-full ">
+        <main className="min-h-screen  flex flex-col items-center justify-center">
+            <div className="w-full  ">
                 {children}
             </div>
-            <footer className="absolute bottom-0 left-0 right-0 p-4 ">
-                <p className="text-center text-sm text-gray-800 font-light">
-                    {storeName}
-                </p>
+            <footer className="sticky bottom-0 bg-white w-full py-4 text-center text-sm text-gray-800">
+                {storeName}
             </footer>
         </main>
     )

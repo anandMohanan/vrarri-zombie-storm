@@ -8,6 +8,18 @@ export interface Player {
     color: PlayerColor;
     signature?: string;
     agreedToTerms: boolean;
+
+    // NEW
+    consentFlags: {
+        agreeTerms: boolean;
+        agreeEsign: boolean;
+        agreeEmail: boolean;
+    };
+    signatureMeta?: {
+        timestamp: string;
+        ip: string;
+        termsVersion: string;
+    };
 }
 
 export type PlayerColor = 'red' | 'light-blue' | 'yellow' | 'green' | 'purple' | 'orange';
@@ -38,7 +50,7 @@ export interface AppState {
     currentPlayer: Partial<Player>;
 
     // Actions
-    initializeSession: () => void;
+    initializeSession: (storeId: string) => void;
     setCurrentStep: (step: AppStep) => void;
     updateCurrentPlayer: (player: Partial<Player>) => void;
     confirmCurrentPlayer: () => void;
@@ -46,4 +58,5 @@ export interface AppState {
     addNewPlayer: () => void;
     completeRegistration: () => void;
     resetToTop: () => void;
+    setSelectedGame: (game: string) => void;
 }

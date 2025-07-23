@@ -128,7 +128,7 @@ export default function UserDetailsStep() {
                             render={({ field }) => (
                                 <FormItem className="space-y-2">
                                     <FormLabel className="text-sm font-medium text-gray-700">
-                                        名前（ニックネーム可）/ Name (Nickname OK)
+                                        名前 / Name 
                                     </FormLabel>
                                     <FormControl>
                                         <Input
