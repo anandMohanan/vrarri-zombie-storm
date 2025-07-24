@@ -8,6 +8,15 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useStaffStore } from '@/lib/staff-store';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/lib/firebase'; // your firebase.ts export
+import {
+    Loader2,
+    Check, // For Accept
+    RotateCcw, // For Retake
+    Camera, // For Take
+    RefreshCw, // For Flip (common for camera rotation)
+    ArrowLeft, // For Cancel (back action)
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function PhotoCaptureStep() {
     const { selectedPlayer, currentTeam, updatePlayerPhoto, setCurrentStep } =
@@ -20,6 +29,7 @@ export default function PhotoCaptureStep() {
     const [photo, setPhoto] = useState<string | null>(null);
     const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
     const [cameraReady, setCameraReady] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
 
     /* ---------- camera lifecycle ---------- */
     useEffect(() => {
@@ -38,6 +48,10 @@ export default function PhotoCaptureStep() {
             setCameraReady(false);
         } catch (err) {
             console.error(err);
+            toast.error('Failed to access camera.', {
+                description:
+                    'Please ensure your browser has camera permissions enabled and try again.',
+            });
         }
     };
 
@@ -52,7 +66,12 @@ export default function PhotoCaptureStep() {
     const takePhoto = () => {
         const video = videoRef.current;
         const canvas = canvasRef.current;
-        if (!video || !canvas) return;
+        if (!video || !canvas) {
+            toast.error('Camera not ready.', {
+                description: 'Please wait for the camera to initialize.',
+            });
+            return;
+        }
 
         const size = Math.min(video.videoWidth, video.videoHeight);
         const offsetX = (video.videoWidth - size) / 2;
@@ -63,30 +82,50 @@ export default function PhotoCaptureStep() {
         const ctx = canvas.getContext('2d')!;
         ctx.drawImage(video, offsetX, offsetY, size, size, 0, 0, 512, 512);
         setPhoto(canvas.toDataURL('image/png'));
+        toast.success('Photo captured!', {
+            description: 'Preview your photo and accept or retake.',
+        });
     };
 
-    const retake = () => setPhoto(null);
+    const retake = () => {
+        setPhoto(null);
+        toast.info('Photo discarded. You can take a new one.');
+    };
 
     const accept = async () => {
-        if (!photo || !selectedPlayer || !currentTeam) return;
+        if (!photo || !selectedPlayer || !currentTeam) {
+            toast.error('Missing photo or player data. Cannot save.');
+            return;
+        }
 
-        // 1. Upload to Firebase Storage
-        const storagePath = `photos/${currentTeam.sessionCode}/${selectedPlayer.id}.png`;
-        const storageRef = ref(storage, storagePath);
-        await uploadString(storageRef, photo, 'data_url');
-        const publicUrl = await getDownloadURL(storageRef);
+        setIsUploading(true);
+        try {
+            const storagePath = `photos/${currentTeam.sessionCode}/${selectedPlayer.id}.png`;
+            const storageRef = ref(storage, storagePath);
+            await uploadString(storageRef, photo, 'data_url');
+            const publicUrl = await getDownloadURL(storageRef);
 
-        // 2. Save the public URL via your existing flow
-        await updatePlayerPhoto(selectedPlayer.id, publicUrl);
+            await updatePlayerPhoto(selectedPlayer.id, publicUrl);
 
-        // 3. Stop camera and go back
-        stopCamera();
-        setCurrentStep('player-selection');
+            toast.success('Photo uploaded successfully!', {
+                description: `Photo for ${selectedPlayer.name} has been saved.`,
+            });
+            stopCamera();
+            setCurrentStep('player-selection');
+        } catch (error) {
+            console.error('Error uploading photo:', error);
+            toast.error('Failed to upload photo.', {
+                description: `There was an issue uploading the photo for ${selectedPlayer.name}. Please try again.`,
+            });
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     const cancel = () => {
         stopCamera();
         setCurrentStep('player-selection');
+        toast.info('Photo capture cancelled.');
     };
 
     if (!selectedPlayer || !currentTeam) return <div>Loading…</div>;
@@ -126,8 +165,9 @@ export default function PhotoCaptureStep() {
                 </div>
 
                 <div className="flex justify-between">
-                    <Button variant="outline" onClick={cancel}>
-                        Cancel
+                    <Button variant="outline" onClick={cancel} disabled={isUploading}>
+                        <ArrowLeft className="h-4 w-4" />
+                        <span className="sr-only">Cancel</span> {/* For accessibility */}
                     </Button>
 
                     <div className="flex gap-2">
@@ -140,24 +180,40 @@ export default function PhotoCaptureStep() {
                                             prev === 'user' ? 'environment' : 'user'
                                         )
                                     }
+                                    disabled={!cameraReady || isUploading}
                                 >
-                                    Flip
+                                    <RefreshCw className="h-4 w-4" />
+                                    <span className="sr-only">Flip Camera</span>{' '}
+                                    {/* For accessibility */}
                                 </Button>
                                 <Button
                                     onClick={takePhoto}
-                                    disabled={!cameraReady}
+                                    disabled={!cameraReady || isUploading}
                                     className="bg-black text-white"
                                 >
-                                    📸 Take
+                                    <Camera className="h-4 w-4 mr-2" />
+                                    <span>Take</span>
                                 </Button>
                             </>
                         ) : (
                             <>
-                                <Button variant="outline" onClick={retake}>
-                                    Retake
+                                <Button variant="outline" onClick={retake} disabled={isUploading}>
+                                    <RotateCcw className="h-4 w-4 mr-2" />
+                                    <span>Retake</span>
                                 </Button>
-                                <Button onClick={accept} className="bg-green-600 text-white">
-                                    ✓ Accept
+                                <Button
+                                    onClick={accept}
+                                    className="bg-green-600 text-white"
+                                    disabled={isUploading}
+                                >
+                                    {isUploading ? (
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    ) : (
+                                        <>
+                                            <Check className="h-4 w-4 mr-2" />
+                                            <span>Accept</span>
+                                        </>
+                                    )}
                                 </Button>
                             </>
                         )}
