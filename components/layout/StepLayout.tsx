@@ -11,13 +11,15 @@ interface StepLayoutProps {
     showHeader?: boolean;
     showTeamNumber?: boolean;
     showPlayerIndicator?: boolean;
+    staff?: boolean;
 }
 
 export default function StepLayout({
     children,
     showHeader = true,
     showTeamNumber = false,
-    showPlayerIndicator = false
+    showPlayerIndicator = false,
+    staff = false
 }: StepLayoutProps) {
     const { team, currentPlayer } = useAppStore();
 
@@ -68,7 +70,7 @@ export default function StepLayout({
 
             {/* Main Content */}
             <div className="flex-1 flex items-center justify-center p-6">
-                <Card className="w-full max-w-2xl  ">
+                <Card className={cn("w-full ", staff ? "max-w-6xl" : "max-w-2xl")}>
                     <CardContent className="">
                         {children}
                     </CardContent>
