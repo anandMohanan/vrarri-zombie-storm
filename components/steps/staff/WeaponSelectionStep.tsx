@@ -1,3 +1,4 @@
+// WeaponSelectionStep.tsx
 'use client';
 
 import StepLayout from '@/components/layout/StepLayout';
@@ -35,13 +36,22 @@ export default function WeaponSelectionStep() {
     const getPlayerColorClass = (color: string) => {
         const colorMap = {
             'red': 'bg-red-500',
-            'blue': 'bg-blue-500',      // Updated from light-blue
+            'blue': 'bg-blue-500',
             'yellow': 'bg-yellow-500',
             'green': 'bg-green-500',
             'purple': 'bg-purple-500',
             'orange': 'bg-orange-500',
         };
         return colorMap[color as keyof typeof colorMap] || 'bg-gray-500';
+    };
+
+    // Map weapon IDs to image paths
+    const weaponImages: Record<string, string> = {
+        'assault-rifle': '/assault_rifle_720.png',
+        'submachine-gun': '/smg_720.png',
+        'dual-pistols': '/pistol_double.png',
+        'shotgun': '/shotgun_720.png',
+        'sniper-rifle': '/sniper_720.png',
     };
 
     return (
@@ -93,7 +103,7 @@ export default function WeaponSelectionStep() {
                                     onClick={() => handleWeaponSelect(weapon.id)}
                                     disabled={weapon.currentCount === 0}
                                     variant={weapon.currentCount > 0 ? "outline" : "secondary"}
-                                    className={`h-24 flex flex-col items-center justify-center space-y-2 text-sm
+                                    className={`h-32 flex flex-col items-center justify-center space-y-2 text-sm
                     ${weapon.currentCount > 0
                                             ? 'border-2 hover:border-blue-500 hover:bg-blue-50'
                                             : 'opacity-50 cursor-not-allowed bg-gray-100'
@@ -103,7 +113,13 @@ export default function WeaponSelectionStep() {
                                             : ''
                                         }`}
                                 >
-                                    <div className="text-2xl">🔫</div>
+                                    <div className="w-16 h-16 flex items-center justify-center">
+                                        <img 
+                                            src={weaponImages[weapon.id]} 
+                                            alt={weapon.name}
+                                            className="max-w-full max-h-full object-contain"
+                                        />
+                                    </div>
                                     <div className="text-center">
                                         <div className="font-medium">{weapon.name}</div>
                                         <div className="text-xs text-gray-600">{weapon.nameJp}</div>
@@ -124,7 +140,13 @@ export default function WeaponSelectionStep() {
                                             Currently Selected Weapon
                                         </h3>
                                         <div className="flex items-center justify-center space-x-4 bg-white rounded-lg p-6 border">
-                                            <div className="text-4xl">🔫</div>
+                                            <div className="w-20 h-20 flex items-center justify-center">
+                                                <img 
+                                                    src={weaponImages[selectedPlayer.selectedWeapon]} 
+                                                    alt={availableWeapons.find(w => w.id === selectedPlayer.selectedWeapon)?.name}
+                                                    className="max-w-full max-h-full object-contain"
+                                                />
+                                            </div>
                                             <div>
                                                 <div className="font-bold text-lg">
                                                     {availableWeapons.find(w => w.id === selectedPlayer.selectedWeapon)?.name}

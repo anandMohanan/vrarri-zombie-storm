@@ -41,6 +41,20 @@ export default function PlayerSelectionStep() {
     const allPlayersReady = currentTeam.players.every(p => p.hasPhoto && p.hasWeapon);
     console.log(currentTeam);
 
+    // Map weapon IDs to image paths
+    const weaponImages: Record<string, string> = {
+        'assault-rifle': '/assault_rifle_720.png',
+        'submachine-gun': '/smg_720.png',
+        'dual-pistols': '/pistol_double.png',
+        'shotgun': '/shotgun_720.png',
+        'sniper-rifle': '/sniper_720.png',
+    };
+
+    // Helper to format weapon names for display
+    const formatWeaponName = (weaponId: string) => {
+        return weaponId.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    };
+
     return (
         <StepLayout staff showTeamNumber>
             <div className="space-y-6">
@@ -68,8 +82,8 @@ export default function PlayerSelectionStep() {
                 <div
                     className={
                         currentTeam.players.length === 1
-                            ? 'max-w-lg mx-auto w-full'          // single player → full-width card
-                            : 'grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'    // Responsive grid
+                            ? 'max-w-lg mx-auto w-full'
+                            : 'grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'
                     }
                 >
                     {currentTeam.players.map((player, index) => (
@@ -116,15 +130,23 @@ export default function PlayerSelectionStep() {
                                         <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
                                             {player.hasWeapon && player.selectedWeapon ? (
                                                 <div className="text-center p-2">
-                                                    <div className="text-xl sm:text-2xl mb-1">🔫</div>
+                                                    <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-1 flex items-center justify-center">
+                                                        <img 
+                                                            src={weaponImages[player.selectedWeapon]} 
+                                                            alt={formatWeaponName(player.selectedWeapon)}
+                                                            className="max-w-full max-h-full object-contain"
+                                                        />
+                                                    </div>
                                                     <span className="text-xs text-green-600 font-medium">✓ Weapon selected</span>
-                                                    <div className="text-xs text-gray-600 mt-1 capitalize">
-                                                        {player.selectedWeapon.replace('-', ' ')}
+                                                    <div className="text-xs text-gray-600 mt-1">
+                                                        {formatWeaponName(player.selectedWeapon)}
                                                     </div>
                                                 </div>
                                             ) : (
                                                 <div className="text-center text-gray-400 p-2">
-                                                    <div className="text-xl sm:text-2xl mb-1">❓</div>
+                                                    <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-1 flex items-center justify-center">
+                                                        <div className="text-2xl sm:text-3xl opacity-50">❓</div>
+                                                    </div>
                                                     <span className="text-xs">No weapon</span>
                                                 </div>
                                             )}
@@ -163,6 +185,6 @@ export default function PlayerSelectionStep() {
                     </Button>
                 </div>
             </div>
-        </StepLayout >
+        </StepLayout>
     );
 }
