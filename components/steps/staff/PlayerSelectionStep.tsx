@@ -118,7 +118,7 @@ export default function PlayerSelectionStep() {
                                                 </div>
                                             )}
                                         </div>
-                                        <Button 
+                                        <Button
                                             onClick={() => handlePhotoClick(player)}
                                             className="w-full text-sm sm:text-base"
                                         >
@@ -126,32 +126,44 @@ export default function PlayerSelectionStep() {
                                         </Button>
                                     </div>
 
+                                    {/* ---------- WEAPON PREVIEW ---------- */}
                                     <div className="space-y-2">
-                                        <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                                        <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300 overflow-hidden">
                                             {player.hasWeapon && player.selectedWeapon ? (
-                                                <div className="text-center p-2">
-                                                    <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-1 flex items-center justify-center">
-                                                        <img 
-                                                            src={weaponImages[player.selectedWeapon]} 
-                                                            alt={formatWeaponName(player.selectedWeapon)}
-                                                            className="max-w-full max-h-full object-contain"
-                                                        />
-                                                    </div>
-                                                    <span className="text-xs text-green-600 font-medium">✓ Weapon selected</span>
-                                                    <div className="text-xs text-gray-600 mt-1">
-                                                        {formatWeaponName(player.selectedWeapon)}
-                                                    </div>
-                                                </div>
+                                                <img
+                                                    src={weaponImages[player.selectedWeapon]}
+                                                    alt={formatWeaponName(player.selectedWeapon)}
+                                                    className="w-full h-full object-contain"
+                                                />
                                             ) : (
                                                 <div className="text-center text-gray-400 p-2">
-                                                    <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-1 flex items-center justify-center">
-                                                        <div className="text-2xl sm:text-3xl opacity-50">❓</div>
-                                                    </div>
+                                                    <div className="text-2xl sm:text-3xl opacity-50">❓</div>
                                                     <span className="text-xs">No weapon</span>
                                                 </div>
                                             )}
                                         </div>
-                                        <Button 
+                                        {/* Selected weapon details */}
+                                        {player.selectedWeapon && (
+                                                <div className="flex items-center space-x-3 bg-white rounded-lg p-3 border">
+                                                    <div>
+                                                        <p className="font-bold text-gray-900">
+                                                            {formatWeaponName(player.selectedWeapon)}
+                                                        </p>
+                                                        <p className="text-xs text-gray-500">
+                                                            {
+                                                                {
+                                                                    'assault-rifle': 'アサルトライフル',
+                                                                    'submachine-gun': 'サブマシンガン',
+                                                                    'dual-pistols': 'デュアルピストル',
+                                                                    shotgun: 'ショットガン',
+                                                                    'sniper-rifle': 'スナイパーライフル',
+                                                                }[player.selectedWeapon]
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                        )}
+                                        <Button
                                             onClick={() => handleWeaponClick(player)}
                                             className="w-full text-sm sm:text-base"
                                         >
